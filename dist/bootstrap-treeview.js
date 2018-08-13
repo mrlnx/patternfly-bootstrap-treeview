@@ -42,6 +42,7 @@
 		checkedIcon: 'glyphicon glyphicon-check',
 		partiallyCheckedIcon: 'glyphicon glyphicon-expand',
 		uncheckedIcon: 'glyphicon glyphicon-unchecked',
+		buttonIcon: 'glyphicon glyphicon-link',
 		tagsClass: 'badge',
 
 		color: undefined,
@@ -58,6 +59,7 @@
 		highlightSearchResults: true,
 		showBorder: true,
 		showIcon: true,
+		showButton: false,
 		showImage: false,
 		showCheckbox: false,
 		checkboxFirst: false,
@@ -966,6 +968,20 @@
 			node.$el.append(node.text);
 		}
 
+		// add button
+		if(this._options.showButton && node.buttons) {
+
+		//	console.log(node.buttons);
+
+			if (this._options.showButton) {
+				node.$el
+					.append(this._template.button.clone()
+						.addClass('node-button')
+						.addClass(this._options.buttonIcon)
+					);
+			}
+		}
+
 		// Add tags as badges
 		if (this._options.showTags && node.tags) {
 			$.each(node.tags, $.proxy(function addTag(id, tag) {
@@ -1168,7 +1184,8 @@
 		},
 		image: $('<span class="image"></span>'),
 		badge: $('<span></span>'),
-		text: $('<span class="text"></span>')
+		text: $('<span class="text"></span>'),
+		button: $('<span class="button"></span>')
 	};
 
 	Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'
