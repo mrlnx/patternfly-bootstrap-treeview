@@ -42,6 +42,7 @@
 		checkedIcon: 'glyphicon glyphicon-check',
 		partiallyCheckedIcon: 'glyphicon glyphicon-expand',
 		uncheckedIcon: 'glyphicon glyphicon-unchecked',
+		buttonIcon: 'glyphicon glyphicon-link',
 		tagsClass: 'badge',
 
 		color: undefined,
@@ -58,6 +59,7 @@
 		highlightSearchResults: true,
 		showBorder: true,
 		showIcon: true,
+		showButton: false,
 		showImage: false,
 		showCheckbox: false,
 		checkboxFirst: false,
@@ -83,6 +85,7 @@
 		onNodeDisabled: undefined,
 		onNodeEnabled: undefined,
 		onNodeExpanded: undefined,
+		onNodeChanged: undefined,
 		onNodeSelected: undefined,
 		onNodeUnchecked: undefined,
 		onNodeUnselected: undefined,
@@ -269,6 +272,7 @@
 		this.$element.off('nodeDisabled');
 		this.$element.off('nodeEnabled');
 		this.$element.off('nodeExpanded');
+		this.$element.off('nodeChanged');
 		this.$element.off('nodeSelected');
 		this.$element.off('nodeUnchecked');
 		this.$element.off('nodeUnselected');
@@ -323,6 +327,10 @@
 
 		if (typeof (this._options.onNodeExpanded) === 'function') {
 			this.$element.on('nodeExpanded', this._options.onNodeExpanded);
+		}
+
+		if (typeof (this._options.onNodeChanged) === 'function') {
+			this.$element.on('nodeChanged', this._options.onNodeChanged);
 		}
 
 		if (typeof (this._options.onNodeSelected) === 'function') {
@@ -633,7 +641,7 @@
 		return this;
 	};
 
-	Tree.prototype._setSelected = function (node, state, options) {
+	Tree.prototype._setSelected = function (node, state, options, fired) {
 
 		// We never pass options when rendering, so the only time
 		// we need to validate state is from user interaction
@@ -644,7 +652,7 @@
 			// If multiSelect false, unselect previously selected
 			if (!this._options.multiSelect) {
 				$.each(this._findNodes('true', 'state.selected'), $.proxy(function (index, node) {
-					this._setSelected(node, false, $.extend(options, {unselecting: true}));
+					this._setSelected(node, false, $.extend(options, {unselecting: true}), true);
 				}, this));
 			}
 
@@ -664,6 +672,7 @@
 
 			// Optionally trigger event
 			this._triggerEvent('nodeSelected', node, options);
+			this._triggerEvent('nodeChanged', node, options);
 		}
 		else {
 
@@ -674,6 +683,7 @@
 				// Fire the nodeSelected event if reselection is allowed
 				if (this._options.allowReselect) {
 					this._triggerEvent('nodeSelected', node, options);
+					this._triggerEvent('nodeChanged', node, options);
 				}
 				return this;
 			}
@@ -694,6 +704,9 @@
 
 			// Optionally trigger event
 			this._triggerEvent('nodeUnselected', node, options);
+			if (!fired) {
+				this._triggerEvent('nodeChanged', node, options);
+			}
 		}
 
 		return this;
@@ -966,6 +979,17 @@
 			node.$el.append(node.text);
 		}
 
+		// add button
+		if(this._options.showButton && node.buttons) {
+			if (this._options.showButton) {
+				node.$el
+					.append(this._template.button.clone()
+						.addClass('node-button')
+						.addClass(this._options.buttonIcon)
+					);
+			}
+		}
+
 		// Add tags as badges
 		if (this._options.showTags && node.tags) {
 			$.each(node.tags, $.proxy(function addTag(id, tag) {
@@ -1168,7 +1192,8 @@
 		},
 		image: $('<span class="image"></span>'),
 		badge: $('<span></span>'),
-		text: $('<span class="text"></span>')
+		text: $('<span class="text"></span>'),
+		button: $('<span class="button"></span>')
 	};
 
 	Tree.prototype._css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}'
@@ -1179,8 +1204,8 @@
 		@param {String} pattern - A pattern to match against a given field
 		@return {String} field - Field to query pattern against
 	*/
-	Tree.prototype.findNodes = function (pattern, field) {
-		return this._findNodes(pattern, field);
+	Tree.prototype.findNodes = function (pattern, field, modifier) {
+		return this._findNodes(pattern, field, modifier);
 	};
 
 
