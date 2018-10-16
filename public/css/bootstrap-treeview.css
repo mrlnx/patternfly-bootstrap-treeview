@@ -40,6 +40,14 @@
 	display: none;
 }
 
+.treeview .list-group-item:not(.node-disabled):hover .button {
+	display: blok;
+}
+
+.treeview .list-group-item:not(.node-disabled):hover .badge {
+	display: none;
+}
+
 .treeview span.image {
   display: inline-block;
   width: 12px;
