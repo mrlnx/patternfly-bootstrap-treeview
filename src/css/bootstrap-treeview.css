@@ -41,7 +41,7 @@
 }
 
 .treeview .list-group-item:not(.node-disabled):hover .button {
-	display: blok;
+	display: block;
 }
 
 .treeview .list-group-item:not(.node-disabled):hover .badge {
