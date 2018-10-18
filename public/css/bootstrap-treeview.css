@@ -40,6 +40,10 @@
 	display: none;
 }
 
+.treeview .list-group-item:not(.node-disabled) .button {
+	display: none;
+}
+
 .treeview .list-group-item:not(.node-disabled):hover .button {
 	display: block;
 }
