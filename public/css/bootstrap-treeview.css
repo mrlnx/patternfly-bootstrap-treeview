@@ -40,12 +40,8 @@
 	display: none;
 }
 
-.treeview .list-group-item:not(.node-disabled) .button {
-	display: none;
-}
-
 .treeview .list-group-item:not(.node-disabled):hover .button {
-	display: block;
+	display: blok;
 }
 
 .treeview .list-group-item:not(.node-disabled):hover .badge {
